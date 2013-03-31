@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block body %}
+    <h2 class="demo-panel-title">Поиск</h2>
+
+    <div>
+        <input name="search_city_name" type="text" placeholder="Название города" id="search-input" style="width: 40%">
+
+        <div id="search-results" class="row mbl">
+
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $("#search-input").keyup(function () {
+                    var text = $("#search-input").val().trim();
+                    var elt = $("#search-results");
+                    if (text) {
+                        $.ajax({
+                            type: "GET",
+                            url: "/_search_city",
+                            data: {"text": text},
+                            cache: false,
+                            success: function (response) {
+                                elt.empty();
+                                for (var i = 0; i < response.cities.length; i++) {
+                                    elt.append('\
+                                        <a href="/w/' + response.cities[i].name_en + '?city=' + response.cities[i].id + '">\
+                                        <div class="span3 outline">\
+                                        <dl class="palette palette-info">\
+                                        <h3>' + response.cities[i].name_ru + '</h3>\
+                                        </dl>\
+                                        <dl class="palette palette-info-dark">\
+                                        </dl>\
+                                        </div>\
+                                        </a>');
+                                }
+                            }
+                        });
+                    } else {
+                        elt.empty();
+                    }
+                    return false;
+                });
+            });
+        </script>
+    </div>
+
+    {% if nearest_cities %}
+        <h2 class="demo-panel-title">Ближайшие</h2>
+        <div class="row mbl">
+            {% for city in nearest_cities %}
+                {{ city_short_tile(city, 'palette-info', 'palette-info-dark') }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if popular_cities %}
+        <h2 class="demo-panel-title">Популярные</h2>
+        <div class="row mbl">
+            {% for city in popular_cities %}
+                {{ city_short_tile(city, 'palette-night', 'palette-night-dark') }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}{%- for data in datas -%}
+    {{- data.city.name_ru -}}
+    {%- if not loop.last %}, {% endif -%}
+{% endfor %}{% endblock %}
+
+{% block body %}
+    <div class="demo-headline">
+        <h1 class="demo-logo">
+            <a href="/">MeWeather</a>
+            <small>Точная информация о погоде</small>
+        </h1>
+    </div>
+
+    <div class="row">
+        {% for data in datas %}
+            {{ data_long_tile(data, 'palette-firm', 'palette-firm-dark') }}
+            <!--{{ (data|string) | safe }}-->
+        {% endfor %}
+    </div>
+{% endblock %}

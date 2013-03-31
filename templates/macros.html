@@ -1,0 +1,100 @@
+{% macro city_short_tile(city, class_top, class_bottom) %}
+    <a href="{{ url_for('weather', city=city.id, for_humans=city.name_en) }}">
+        <div class="span3 outline">
+            <dl class="palette {{ class_top }}">
+                <h3>{{ city.name_ru }}</h3>
+                {{ city.country_ru }}
+            </dl>
+            <dl class="palette {{ class_bottom }}">
+                <h2>{{ '%g' % city.data.metar.temperature }}°C</h2>
+                <small style="color: lightsteelblue">
+                    Обновлено
+                                    <span title="{{ city.data.metar.datetime.strftime('%d.%m.%Y, %H:%M') }}">
+                                        {{ format_timedelta(city.data.metar.datetime, datetime.now()) }}
+                                        назад
+                                    </span>
+                </small>
+            </dl>
+        </div>
+    </a>
+{% endmacro %}
+
+{% macro clouds_string(clouds) %}
+    {% if not clouds %}
+        Безоблачно
+    {% else %}
+        {% set cloud = clouds[0] %}
+        {% if cloud.cover in ['SKC', 'CLR', 'NSC'] %}
+            Ясно
+        {% elif cloud.cover == 'FEW' %}
+            Незначительная облачность
+        {% elif cloud.cover == 'SCT' %}
+            Средняя облачность
+        {% elif cloud.cover == 'BKN' %}
+            Сильная облачность
+        {% elif cloud.cover == 'OVC' %}
+            Сплошная облачность
+        {% else %}
+            НЕИЗВЕСТНО!!!
+        {% endif %}
+        {% if cloud.cover not in ['SKC', 'CLR', 'NSC'] and cloud.height %}
+            на высоте {{ '%.0f' % (cloud.height|round(-1)) }} м
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro weather_conditions_string(weather) %}
+    {% if not weather %}
+        Без осадков
+    {% else %}
+        {% set j = joiner() %}
+        {% for intensity, description, precipitation, obscuration, other in weather %}
+            {{ j() }}
+            {% if precipitation == 'SN' %}
+                Снег
+            {% else %}
+                {{ precipitation }}
+            {% endif %}
+            {#            {{ intensity or '' }}#}
+            {#            {{ description or '' }}#}
+            {#            {{ obscuration or '' }}#}
+            {#            {{ other or '' }}#}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro data_long_tile(data, class_top, class_bottom) %}
+    <a href="{{ url_for('weather', city=data.city.id, for_humans=data.city.name_en) }}">
+        <div class="span4 outline">
+            <dl class="palette {{ class_top }}">
+                <h3>{{ data.city.name_ru }}</h3>
+                {{ data.city.country_ru }},
+                {{ '%.0f' % data.distance }} км от метеостанции
+            </dl>
+            <dl class="palette {{ class_bottom }}" style="line-height: 15pt">
+                <h2>{{ '%g' % data.metar.temperature }}°C</h2>
+
+                <div>{{ clouds_string(data.metar.clouds) }}</div>
+                <div>{{ weather_conditions_string(data.metar.weather) }}</div>
+                <div>{{ '%.0f' % data.metar.pressure }} мм.рт.ст.</div>
+                <div>Ветер
+                    <span class="arrow dir-{{ arrow_class_from_deg(data.metar.wind.direction) }}"></span>
+                    {{ '%.0f' % data.metar.wind.speed }}
+                    м/с
+                </div>
+                <div>Точка росы {{ '%.0f' % data.metar.dew_point }}°C,
+                    влажность {{ '%.0f' % (data.metar.humidity * 100) }}%
+                </div>
+                <div>Видимость {% if data.metar.visibility[1] < 9000 %}{{ '%.0f' % data.metar.visibility[1] }} м
+                    {% else %}<span style="font-size: large">∞</span>{% endif %}</div>
+                <small style="color: lightsteelblue">
+                    Обновлено
+                        <span title="{{ data.metar.datetime.strftime('%d.%m.%Y, %H:%M') }}">
+                            {{ format_timedelta(data.metar.datetime, datetime.now()) }}
+                            назад
+                        </span>
+                </small>
+            </dl>
+        </div>
+    </a>
+{% endmacro %}
