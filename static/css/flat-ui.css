@@ -3253,11 +3253,54 @@ body.vjs-full-window {
     margin-left: 20px;
 }
 
-.outline {
-    border: 3px solid transparent;
-    border-top-width: 8px;
+.alert {
+    padding: 8px 35px 8px 14px;
+    margin-bottom: 20px;
+    text-shadow: none;
+    background-color: #F1C40F;
+    border: none;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    width: 40%;
 }
 
-.outline:hover {
-    border-color: #e74c3c;
+.alert,
+.alert h4 {
+    color: white;
+}
+
+.alert-danger,
+.alert-error,
+.alert-success,
+.alert-info {
+    color: white;
+}
+
+.alert .close {
+    position: relative;
+    top: -2px;
+    right: -21px;
+    line-height: 20px;
+}
+
+.alert-success {
+    background-color: #2ecc71;
+}
+
+.alert-success h4,
+.alert-danger h4,
+.alert-error h4,
+.alert-info h4 {
+    color: white;
+    font-weight: bold;
+}
+
+.alert-danger,
+.alert-error {
+    background-color: #e74c3c;
+}
+
+.alert-info {
+    background-color: #3498db;
 }

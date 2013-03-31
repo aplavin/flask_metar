@@ -1,3 +1,14 @@
+
+
+.outline {
+    border: 3px solid transparent;
+    border-top-width: 8px;
+}
+
+.outline:hover {
+    border-color: #e74c3c;
+}
+
 .arrow {
     vertical-align: middle;
     margin: 5px;

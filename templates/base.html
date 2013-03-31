@@ -8,19 +8,20 @@
     <link href="/static/css/my.css" rel="stylesheet">
     <link rel="shortcut icon" href="/static/images/favicon.ico">
     <title>{% block title %}{% endblock %} - MeWeather</title>
-    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="/static/js/jquery-1.9.1.min.js"></script>
 </head>
 <body>
 <div class="container">
     {% for category, message in get_flashed_messages(with_categories=True) %}
         {#    {% for category, message in [('error', 'Ошибка'), ('message', 'Сообщение')] %}#}
-        <div class="row mbl" style="">
-            <div class="span4">
-                <dl class="palette {{ "palette-alizarin" if category=="error" else "palette-success" }}">
-                    {{ message }}
-                </dl>
-            </div>
-        </div>
+        <div class="alert alert-{{ "error" if category=="error" else "info" }}">{{ message }}</div>
+        {#        <div class="row mbl" style="">#}
+        {#            <div class="span4">#}
+        {#                <dl class="palette {{ "palette-alizarin" if category=="error" else "palette-success" }}">#}
+        {#                    {{ message }}#}
+        {#                </dl>#}
+        {#            </div>#}
+        {#        </div>#}
     {% endfor %}
 
     <div style="float: right">
