@@ -1,0 +1,54 @@
+.arrow {
+    vertical-align: middle;
+    margin: 5px;
+    height: 0;
+    width: 0;
+    display: inline-block;
+    /* IE7 inline-block hack */
+    *display: inline;
+    zoom: 0.6;
+}
+
+.dir-e {
+    border-left: 17px solid orange;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+}
+
+.dir-w {
+    border-right: 17px solid orange;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+}
+
+.dir-s {
+    border-top: 20px solid orange;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+}
+
+.dir-n {
+    border-bottom: 20px solid orange;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+}
+
+.dir-nw {
+    border-top: 25px solid orange;
+    border-right: 25px solid transparent;
+}
+
+.dir-ne {
+    border-top: 25px solid orange;
+    border-left: 25px solid transparent;
+}
+
+.dir-sw {
+    border-bottom: 25px solid orange;
+    border-right: 25px solid transparent;
+}
+
+.dir-se {
+    border-bottom: 25px solid orange;
+    border-left: 25px solid transparent;
+}
