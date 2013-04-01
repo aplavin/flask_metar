@@ -3,5 +3,11 @@
 {% block title %}{{ session.user_name }}{% endblock %}
 
 {% block body %}
-    <a href="{{ url_for('city_chooser', next_action='add') }}">добавить</a>
+    <a href="{{ url_for('city_chooser', next_action='add') }}">Добавить город</a>
+
+    <div class="row">
+        {% for city in cities %}
+            {{ long_tile(city.data, city, 'palette-firm', 'palette-firm-dark') }}
+        {% endfor %}
+    </div>
 {% endblock %}
