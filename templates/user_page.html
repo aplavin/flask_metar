@@ -7,7 +7,7 @@
 
     <div class="row">
         {% for city in cities %}
-            {{ long_tile(city.data, city, 'palette-firm', 'palette-firm-dark') }}
+            {{ long_tile(city.data, city, 'palette-firm', 'palette-firm-dark', with_delete=True) }}
         {% endfor %}
     </div>
 {% endblock %}

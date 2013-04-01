@@ -317,8 +317,17 @@ def user_page():
 @app.route('/add_city/<city_id>/<for_humans>')
 def add_city(city_id, for_humans):
     user_name = session['user_name']
-    db.users_ids.update({'_id': user_name}, {'$push': {'cities': int(city_id)}})
+    city_id = int(city_id)
+    db.users_ids.update({'_id': user_name, 'cities': {'$nin': [city_id]}}, {'$push': {'cities': city_id}})
     return redirect(url_for('user_page'))
+
+
+@app.route('/remove_city/<city_id>')
+def remove_city(city_id):
+    user_name = session['user_name']
+    city_id = int(city_id)
+    db.users_ids.update({'_id': user_name}, {'$pull': {'cities': city_id}})
+    return ''
 
 
 if os.path.isdir('/root/flask-metar/data/'):

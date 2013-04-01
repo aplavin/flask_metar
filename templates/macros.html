@@ -1,6 +1,5 @@
 {% macro short_tile(data, city, class_top, class_bottom, next_action='show') %}
-    <a href="{{
-            url_for('weather', city_id=city.id, for_humans=city.name_en)
+    <a href="{{ url_for('weather', city_id=city.id, for_humans=city.name_en)
             if next_action == 'show' else
             url_for('add_city', city_id=city.id, for_humans=city.name_en) }}">
         <div class="span3 outline">
@@ -69,40 +68,46 @@
 {% endmacro %}
 
 
-{% macro long_tile(data, city, class_top, class_bottom) %}
-    <a href="{{ url_for('weather', city_id=city.id, for_humans=city.name_en) }}">
-        <div class="span4 outline">
-            <dl class="palette {{ class_top }}">
-                <h3>{{ city.name_ru }}</h3>
-                {{ city.country_ru }},
-                {{ '%.0f' % data.distance }} км от метеостанции
-            </dl>
-            <dl class="palette {{ class_bottom }}" style="line-height: 15pt">
-                <h2>{{ '%g' % data.metar.temperature }}°C</h2>
+{% macro long_tile(data, city, class_top, class_bottom, with_delete=False) %}
+    <div class="span4 outline" style="position: relative">
+        {% if with_delete %}
+            <a href="#" class="remove-city-link" data-cityid="{{ city.id }}">
+                <span
+                        class="fui-cross-24"
+                        style="position: absolute; top: 10px; right: 10px; zoom: 2; color: indianred">
+                </span>
+            </a>
+        {% endif %}
+        <dl class="palette {{ class_top }}">
+            <h3>{{ city.name_ru }}</h3>
+            {{ city.country_ru }},
+            {{ '%.0f' % data.distance }} км от метеостанции
+        </dl>
+        <dl class="palette {{ class_bottom }}" style="line-height: 15pt">
+            <h2>{{ '%g' % data.metar.temperature }}°C</h2>
 
-                <div>{{ clouds_string(data.metar.clouds) }}</div>
-                <div>{{ weather_conditions_string(data.metar.weather) }}</div>
-                <div>{{ '%.0f' % data.metar.pressure }} мм.рт.ст.</div>
-                <div>Ветер
-                    <span class="arrow dir-{{ arrow_class_from_deg(data.metar.wind.direction) }}"></span>
-                    {{ '%.0f' % data.metar.wind.speed }}
-                    м/с
-                </div>
-                <div>Точка росы {{ '%.0f' % data.metar.dew_point }}°C,
-                    влажность {{ '%.0f' % (data.metar.humidity * 100) }}%
-                </div>
-                <div>Видимость {% if data.metar.visibility[1] < 9000 %}{{ '%.0f' % data.metar.visibility[1] }} м
-                    {% else %}<span style="font-size: large">∞</span>{% endif %}</div>
-                <small style="color: lightsteelblue">
-                    Обновлено
+            <div>{{ clouds_string(data.metar.clouds) }}</div>
+            <div>{{ weather_conditions_string(data.metar.weather) }}</div>
+            <div>{{ '%.0f' % data.metar.pressure }} мм.рт.ст.</div>
+            <div>Ветер
+                <span class="arrow dir-{{ arrow_class_from_deg(data.metar.wind.direction) }}"></span>
+                {{ '%.0f' % data.metar.wind.speed }}
+                м/с
+            </div>
+            <div>Точка росы {{ '%.0f' % data.metar.dew_point }}°C,
+                влажность {{ '%.0f' % (data.metar.humidity * 100) }}%
+            </div>
+            <div>Видимость {% if data.metar.visibility[1] < 9000 %}{{ '%.0f' % data.metar.visibility[1] }} м
+                {% else %}<span style="font-size: large">∞</span>{% endif %}</div>
+            <small style="color: lightsteelblue">
+                Обновлено
                         <span title="{{ data.metar.datetime.strftime('%d.%m.%Y, %H:%M') }}">
                             {{ format_timedelta(data.metar.datetime, datetime.now()) }}
                             назад
                         </span>
-                </small>
-            </dl>
-        </div>
-    </a>
+            </small>
+        </dl>
+    </div>
 {% endmacro %}
 
 
