@@ -268,6 +268,10 @@ def login():
     user_name = request.form['user_name']
     password = request.form['password']
 
+    if len(user_name) + len(password) > 100:
+        flash(u'Ошибка: слишком длинное имя (%s) или пароль (%s)' % (user_name, password), 'error')
+        return redirect(url_for('index'))
+
     if db.users_ids.find({'_id': user_name}).count() == 0:
         db.users_ids.insert({
             '_id': user_name,

@@ -112,6 +112,7 @@
             <p class="login_hidden">Если пользователя не существует, он будет создан:</p>
             <input type="text" class="login_hidden" name="user_name" placeholder="Имя">
             <input type="text" class="login_hidden" name="password" placeholder="Пароль">
+            <span class="fui-lock-24"></span>
             <input type="submit" id="login_submit_button" class="btn btn-primary" value="Войти">
             <script>
                 $(".login_hidden").hide();
@@ -128,7 +129,7 @@
         </form>
     {% else %}
         Пользователь <a href="{{ url_for('user_page') }}">{{ session.user_name }}</a>
-        &nbsp;
+        <span class="fui-man-24"></span>&nbsp;
         <a href="{{ url_for("logout") }}" class="btn btn-primary">Выйти</a>
     {% endif %}
 {% endmacro %}
