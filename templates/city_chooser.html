@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Выбор города{% endblock %}
+
+{% block body %}
+    <h2 class="demo-panel-title">Поиск</h2>
+
+    <div>
+        <input name="search_city_name" type="text" placeholder="Название города" id="search-input" style="width: 40%">
+
+        <div id="search-results" class="row mbl">
+
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $("#search-input").keyup(function () {
+                    var text = $("#search-input").val().trim();
+                    var elt = $("#search-results");
+                    if (text) {
+                        $.ajax({
+                            type: "GET",
+                            url: "/_search_city/{{ next_action }}",
+                            data: {"text": text},
+                            cache: false,
+                            success: function (response) {
+                                elt.empty();
+                                elt.html(response);
+                            }
+                        });
+                    } else {
+                        elt.empty();
+                    }
+                    return false;
+                });
+            });
+        </script>
+    </div>
+
+    {{ cities_list("Ближайшие", nearest_cities, 'info', 'info-dark', next_action=next_action) }}
+    {{ cities_list("Популярные", popular_cities, 'night', 'night-dark', next_action=next_action) }}
+{% endblock %}

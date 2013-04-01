@@ -3,4 +3,5 @@
 {% block title %}{{ session.user_name }}{% endblock %}
 
 {% block body %}
+    <a href="{{ url_for('city_chooser', next_action='add') }}">добавить</a>
 {% endblock %}

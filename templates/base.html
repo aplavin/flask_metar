@@ -1,4 +1,5 @@
-{% from "macros.html" import city_short_tile, clouds_string, city_short_tile, weather_conditions_string, data_long_tile %}
+{% from "macros.html" import city_short_tile, clouds_string, short_tile,
+    weather_conditions_string, long_tile, login, cities_list with context %}
 
 <!DOCTYPE html>
 <html>
@@ -15,17 +16,10 @@
     {% for category, message in get_flashed_messages(with_categories=True) %}
         {#    {% for category, message in [('error', 'Ошибка'), ('message', 'Сообщение')] %}#}
         <div class="alert alert-{{ "error" if category=="error" else "info" }}">{{ message }}</div>
-        {#        <div class="row mbl" style="">#}
-        {#            <div class="span4">#}
-        {#                <dl class="palette {{ "palette-alizarin" if category=="error" else "palette-success" }}">#}
-        {#                    {{ message }}#}
-        {#                </dl>#}
-        {#            </div>#}
-        {#        </div>#}
     {% endfor %}
 
     <div style="float: right">
-        {% include "login.html" %}
+        {{ login() }}
     </div>
     {#    <div class="demo-headline">#}
     {#        <h1 class="demo-logo">#}

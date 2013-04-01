@@ -68,7 +68,7 @@ def metar_str_to_dict(line):
         'trend': obs.trend() if obs.trend() else None,
     }
 
-    if dct['dew_point'] and dct['temperature']:
+    if 'dew_point' in dct and 'temperature' in dct:
         b, c = 17.67, 243.5
         dct['humidity'] = math.exp(b * dct['dew_point'] / (c + dct['dew_point']) - b * dct['temperature'] / (c + dct['temperature']))
     else:
@@ -200,6 +200,14 @@ def get_ip():
 
 @app.route('/')
 def index():
+    if 'user_name' in session:
+        return redirect(url_for('user_page'))
+    else:
+        return redirect(url_for('city_chooser', next_action='show'))
+
+
+@app.route('/choose_city/<next_action>')
+def city_chooser(next_action):
     ip = get_ip()
     ip_obj = get_ip_data(ip)
 
@@ -217,41 +225,42 @@ def index():
         c.data = get_data_for(c)
 
     return render_template(
-        'index.html',
+        'city_chooser.html',
+        next_action=next_action,
         nearest_cities=nearest_cities,
         popular_cities=popular_cities)
 
 
-@app.route('/_search_city')
-def search_city():
+@app.route('/_search_city/<next_action>')
+def search_city(next_action):
     text = request.args['text']
-    cities = [Struct(id=c.id, name_ru=c.name_ru, name_en=c.name_en)
-              for c in cities_data
+    cities = [c for c in cities_data
               if c.name_ru.lower().startswith(text.lower()) or c.name_en.lower().startswith(text.lower())]
     cities.sort(key=attrgetter('name_ru'))
-    cities = map(attrgetter('__dict__'), cities)
-    return jsonify(cities=cities[:3])
+    cities = cities[:3]
+    for c in cities:
+        c.data = get_data_for(c)
+
+    return render_template(
+        'city_search_results.html',
+        next_action=next_action,
+        cities=cities)
 
 
-@app.route('/w/<for_humans>')
-def weather(for_humans):
+@app.route('/w/<city_id>/<for_humans>')
+def weather(city_id, for_humans):
     try:
-        city_ids = map(int, request.args.getlist('city'))
+        city_id = int(city_id)
     except ValueError:
         return redirect(url_for('index'))
 
-    if not city_ids:
-        return redirect(url_for('index'))
-
-    cities = [cities_data[cid] for cid in city_ids]
-    datas = map(get_data_for, cities)
-
-    for c, d in zip(cities, datas):
-        d.city = c
+    city = cities_data[city_id]
+    data = get_data_for(city)
 
     return render_template(
         'weather.html',
-        datas=datas)
+        data=data,
+        city=city)
 
 
 @app.route('/login', methods=['POST'])
@@ -290,7 +299,22 @@ def logout():
 
 @app.route('/user')
 def user_page():
-    return render_template('user_page.html')
+    user = db.users_ids.find_one({'_id': session['user_name']})
+    if not user:
+        session.clear()
+        return redirect(url_for('index'))
+    city_ids = user['cities']
+    cities = [cities_data[cid] for cid in city_ids]
+    for c in cities:
+        c.data = get_data_for(c)
+    return render_template('user_page.html', cities=cities)
+
+
+@app.route('/add_city/<city_id>/<for_humans>')
+def add_city(city_id, for_humans):
+    user_name = session['user_name']
+    db.users_ids.update({'_id': user_name}, {'$push': {'cities': int(city_id)}})
+    return redirect(url_for('user_page'))
 
 
 if os.path.isdir('/root/flask-metar/data/'):
