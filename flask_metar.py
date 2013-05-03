@@ -1,6 +1,6 @@
 # coding=utf-8
 from glob import glob
-from flask import Flask, render_template, request, session, url_for, redirect, jsonify, flash, get_flashed_messages
+from flask import Flask, render_template, request, session, url_for, redirect, flash
 import math
 from metar import Metar
 import pygeoip
@@ -9,9 +9,7 @@ from operator import attrgetter
 import heapq
 import json
 from datetime import datetime, timedelta
-from werkzeug.contrib.profiler import ProfilerMiddleware
 from pymongo import MongoClient
-from operator import attrgetter, itemgetter
 
 
 
@@ -32,9 +30,6 @@ class JSONable(object):
 class Struct(JSONable):
     def __init__(self, **kwargs):
         self.__dict__ = kwargs
-
-    # def __str__(self):
-    #     return '<Struct> ' + str(self.__dict__)
 
 
 def d2s(d):
@@ -362,9 +357,6 @@ db = conn.flask_metar
 
 
 def main():
-    # f = open('log', 'w')
-    # app.wsgi_app = ProfilerMiddleware(app.wsgi_app, f)
-
     app.run(debug=True, host='0.0.0.0')
 
 if __name__ == '__main__':

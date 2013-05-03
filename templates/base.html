@@ -19,7 +19,7 @@
         <div class="alert alert-{{ "error" if category=="error" else "info" }}">{{ message }}</div>
     {% endfor %}
 
-    <div style="float: right">
+    <div style="float: right;">
         {{ login() }}
     </div>
     <div class="demo-headline">
@@ -31,6 +31,8 @@
 
     {% block body %}{% endblock %}
 </div>
-<div class="footer-title"><center>&copy; Плавин Александр, 2013<hr/>Исходный код: <a href="http://hg.aplavin.ru/flask_metar">hg.aplavin.ru/flask_metar</a></center></div>
+<div class="footer-title" style="text-align: center;">&copy; Плавин Александр, 2013
+    <hr/>
+    Исходный код: <a href="http://hg.aplavin.ru/flask_metar">hg.aplavin.ru/flask_metar</a></div>
 </body>
 </html>
