@@ -131,7 +131,7 @@ def get_nearest_cities(coords, n):
     return heapq.nsmallest(
         n,
         cities_data,
-        key=lambda p: math.hypot(p.longitude - coords.longitude, p.latitude - coords.latitude))
+        key=lambda p: math.hypot(p['longitude'] - coords['longitude'], p['latitude'] - coords['latitude']))
 
 
 def get_distance(start, end):
@@ -204,11 +204,11 @@ def city_chooser(next_action):
     ip = get_ip()
     ip_obj = get_ip_data(ip)
 
-    if getattr(ip_obj, 'city', None) and getattr(ip_obj, 'latitude') and getattr(ip_obj, 'longitude'):
+    if ip_obj.get('city', None) and ip_obj.get('latitude', None) and ip_obj.get('longitude', None):
         nearest_cities = get_nearest_cities(ip_obj, 3)
 
         for c in nearest_cities:
-            c.data = get_data_for(c)
+            c['data'] = get_data_for(c)
     else:
         nearest_cities = None
 
