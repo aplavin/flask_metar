@@ -5,12 +5,11 @@ import math
 from metar import Metar
 import pygeoip
 import os
-from operator import attrgetter
+from operator import attrgetter, itemgetter
 import heapq
 import json
 from datetime import datetime, timedelta
 from pymongo import MongoClient
-
 
 
 app = Flask(__name__)
@@ -27,23 +26,6 @@ class JSONable(object):
             default=lambda o: o.__dict__ if hasattr(o, '__dict__') else str(o))
 
 
-class Struct(JSONable):
-    def __init__(self, **kwargs):
-        self.__dict__ = kwargs
-
-
-def d2s(d):
-    if isinstance(d, list):
-        d = [d2s(x) for x in d]
-    if not isinstance(d, dict):
-        return d
-
-    o = Struct()
-    for k in d:
-        o.__dict__[k] = d2s(d[k])
-    return o
-
-
 def metar_str_to_dict(line):
     obs = Metar.Metar(line)
 
@@ -51,25 +33,36 @@ def metar_str_to_dict(line):
         'station_id': obs.station_id,
         'datetime': obs.time + timedelta(hours=4),
         'temperature': obs.temp.value('C') if obs.temp is not None else None,
-        'visibility': (obs.vis._gtlt if obs.vis._gtlt else None,
-                       obs.vis.value('m') if obs.vis is not None else None),
-        'wind': {'direction': obs.wind_dir.value() if obs.wind_dir is not None else None,
-                 'speed': obs.wind_speed.value('mps') if obs.wind_speed is not None else None},
+        'visibility': (
+            obs.vis._gtlt if obs.vis._gtlt else None,
+            obs.vis.value('m') if obs.vis is not None else None
+        ),
+        'wind': {
+            'direction': obs.wind_dir.value() if obs.wind_dir is not None else None,
+            'speed': obs.wind_speed.value('mps') if obs.wind_speed is not None else None
+        },
         'pressure': obs.press.value('mm') if obs.press is not None else None,
         'dew_point': obs.dewpt.value('C') if obs.dewpt is not None else None,
-        'clouds': [Struct(cover=cover, height=dist.value('m') if dist is not None else None, type=cl_type)
-                   for cover, dist, cl_type in obs.sky] if obs.sky else None,
+        'clouds': [
+            {
+                'cover': cover,
+                'height': dist.value('m') if dist is not None else None,
+                'type': cl_type
+            }
+            for cover, dist, cl_type in obs.sky
+        ] if obs.sky else None,
         'weather': obs.weather if obs.weather else None,
         'trend': obs.trend() if obs.trend() else None,
     }
 
     if 'dew_point' in dct and 'temperature' in dct:
         b, c = 17.67, 243.5
-        dct['humidity'] = math.exp(b * dct['dew_point'] / (c + dct['dew_point']) - b * dct['temperature'] / (c + dct['temperature']))
+        dct['humidity'] = math.exp(
+            b * dct['dew_point'] / (c + dct['dew_point']) - b * dct['temperature'] / (c + dct['temperature']))
     else:
         dct['humidity'] = None
 
-    return d2s(dct)
+    return dct
 
 
 def arrow_class_from_deg(angle):
@@ -92,12 +85,12 @@ def arrow_class_from_deg(angle):
 def get_airports_data():
     with open(data_folder + 'airports.txt') as f:
         lines = f.read().splitlines()
-        objs = [d2s({
-                'icao_code': splitted[1],
-                'name': splitted[2],
-                'latitude': float(splitted[3]),
-                'longitude': float(splitted[4]),
-                })
+        objs = [{
+                    'icao_code': splitted[1],
+                    'name': splitted[2],
+                    'latitude': float(splitted[3]),
+                    'longitude': float(splitted[4]),
+                }
                 for l in lines
                 for splitted in [l.split('\t')]]
         return objs
@@ -107,17 +100,18 @@ def get_nearest_airports(coords, n):
     return heapq.nsmallest(
         n,
         airports_data,
-        key=lambda p: math.hypot(p.longitude - coords.longitude, p.latitude - coords.latitude))
+        key=lambda p: math.hypot(p['longitude'] - coords['longitude'], p['latitude'] - coords['latitude']))
 
 
 def get_airport_data(icao_code):
-    return [ad for ad in airports_data if ad.icao_code == icao_code][0]
+    return [ad for ad in airports_data if ad['icao_code'] == icao_code][0]
 
 
 def get_cities_data():
     with open(data_folder + 'cities.txt') as f:
         lines = f.read().splitlines()
-        objs = [d2s({
+        objs = [
+            {
                 'id': int(splitted[0]),
                 'country_code': splitted[1],
                 'country_en': splitted[2].decode('utf-8'),
@@ -126,9 +120,10 @@ def get_cities_data():
                 'name_ru': splitted[5].decode('utf-8'),
                 'latitude': float(splitted[6]),
                 'longitude': float(splitted[7]),
-                })
-                for l in lines
-                for splitted in [l.split('\t')]]
+            }
+            for l in lines
+            for splitted in [l.split('\t')]
+        ]
         return objs
 
 
@@ -140,10 +135,10 @@ def get_nearest_cities(coords, n):
 
 
 def get_distance(start, end):
-    start_long = math.radians(start.longitude)
-    start_latt = math.radians(start.latitude)
-    end_long = math.radians(end.longitude)
-    end_latt = math.radians(end.latitude)
+    start_long = math.radians(start['longitude'])
+    start_latt = math.radians(start['latitude'])
+    end_long = math.radians(end['longitude'])
+    end_latt = math.radians(end['latitude'])
     d_latt = end_latt - start_latt
     d_long = end_long - start_long
     a = math.sin(d_latt / 2) ** 2 + math.cos(start_latt) * math.cos(end_latt) * math.sin(d_long / 2) ** 2
@@ -152,7 +147,7 @@ def get_distance(start, end):
 
 
 def get_ip_data(ip):
-    return d2s(gi_city.record_by_addr(ip))
+    return gi_city.record_by_addr(ip)
 
 
 def get_last_data(station_id):
@@ -179,12 +174,13 @@ def format_timedelta(t1, t2):
 
 def get_data_for(coords):
     nearest_airports = get_nearest_airports(coords, 10)
-    airport = next(a for a in nearest_airports if get_last_data(a.icao_code))
+    airport = next(a for a in nearest_airports if get_last_data(a['icao_code']))
 
-    return Struct(
-        airport=airport,
-        metar=get_last_data(airport.icao_code),
-        distance=get_distance(coords, airport))
+    return {
+        'airport': airport,
+        'metar': get_last_data(airport['icao_code']),
+        'distance': get_distance(coords, airport)
+    }
 
 
 def get_ip():
@@ -219,7 +215,7 @@ def city_chooser(next_action):
     popular_cities = popular_cities_g[:]
 
     for c in popular_cities:
-        c.data = get_data_for(c)
+        c['data'] = get_data_for(c)
 
     return render_template(
         'city_chooser.html',
@@ -231,12 +227,15 @@ def city_chooser(next_action):
 @app.route('/_search_city/<next_action>')
 def search_city(next_action):
     text = request.args['text']
-    cities = [c for c in cities_data
-              if c.name_ru.lower().startswith(text.lower()) or c.name_en.lower().startswith(text.lower())]
-    cities.sort(key=attrgetter('name_ru'))
+    cities = [
+        c
+        for c in cities_data
+        if any(name.lower().startswith(text.lower()) for name in [c['name_ru'], c['name_en']])
+    ]
+    cities.sort(key=itemgetter('name_ru'))
     cities = cities[:3]
     for c in cities:
-        c.data = get_data_for(c)
+        c['data'] = get_data_for(c)
 
     return render_template(
         'city_search_results.html',
@@ -307,7 +306,7 @@ def user_page():
     city_ids = user['cities']
     cities = [cities_data[cid] for cid in city_ids]
     for c in cities:
-        c.data = get_data_for(c)
+        c['data'] = get_data_for(c)
     return render_template('user_page.html', cities=cities)
 
 
@@ -335,9 +334,9 @@ else:
     raise NotImplemented
 
 cities_data = get_cities_data()
-assert all(c.id == i for i, c in enumerate(cities_data))
+assert all(c['id'] == i for i, c in enumerate(cities_data))
 
-popular_cities_g = [c for c in cities_data if c.name_ru in [u'Москва', u'Долгопрудный', u'Сочи']]
+popular_cities_g = [c for c in cities_data if c['name_ru'] in [u'Москва', u'Долгопрудный', u'Сочи']]
 
 airports_data = get_airports_data()
 gi_city = pygeoip.GeoIP(data_folder + 'GeoIPCity.dat')
@@ -345,7 +344,6 @@ gi_city = pygeoip.GeoIP(data_folder + 'GeoIPCity.dat')
 with open(sorted(glob(data_folder + 'observations/*'))[-1]) as f:
     last_data = f.read().splitlines()
     last_data = {line[:4]: line for line in last_data}
-
 
 app.jinja_env.globals['datetime'] = datetime
 app.jinja_env.globals['format_timedelta'] = format_timedelta
@@ -358,6 +356,7 @@ db = conn.flask_metar
 
 def main():
     app.run(debug=True, host='0.0.0.0')
+
 
 if __name__ == '__main__':
     main()
