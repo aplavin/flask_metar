@@ -16,16 +16,6 @@ app = Flask(__name__)
 app.secret_key = '8ks0aCYAOPxdDy6I5KJfh4r9A9IX8YN9'
 
 
-class JSONable(object):
-    def __str__(self):
-        return json.dumps(
-            self,
-            sort_keys=True,
-            indent=4,
-            separators=(',', ': '),
-            default=lambda o: o.__dict__ if hasattr(o, '__dict__') else str(o))
-
-
 def metar_str_to_dict(line):
     obs = Metar.Metar(line)
 
