@@ -78,6 +78,8 @@ def metar_str_to_dict(line):
 
 
 def arrow_class_from_deg(angle):
+    if angle is None:
+        return ''
     arrow_directions = [
         (0, 'n'),
         (45, 'ne'),
