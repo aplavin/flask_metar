@@ -17,6 +17,15 @@ app.secret_key = '8ks0aCYAOPxdDy6I5KJfh4r9A9IX8YN9'
 
 
 def metar_str_to_dict(line):
+    """
+    Parse string with metar data to dictionary with its values.
+
+    Args:
+        line: string with metar data
+
+    Returns:
+        dictionary with the values
+    """
     obs = Metar.Metar(line)
 
     dct = {
@@ -73,6 +82,9 @@ def arrow_class_from_deg(angle):
 
 
 def get_airports_data():
+    """
+    Read data from airports.txt and return it as a list of dictionaries with values.
+    """
     with open(data_folder + 'airports.txt') as f:
         lines = f.read().splitlines()
         objs = [{
@@ -87,6 +99,16 @@ def get_airports_data():
 
 
 def get_nearest_airports(coords, n):
+    """
+    Get n nearests airports to a coordinates-like object
+
+    Args:
+        coords: dict with longitude and latitude items
+        n: number of nearest airports to return
+
+    Returns:
+        list of dictinaries with data of nearest airports
+    """
     return heapq.nsmallest(
         n,
         airports_data,
@@ -94,10 +116,22 @@ def get_nearest_airports(coords, n):
 
 
 def get_airport_data(icao_code):
+    """
+    Get airport data from airports_data by ICAO code
+
+    Args:
+        icao_code: ICAO code of the airport
+
+    Returns:
+        airport data for the specified code, if it exists in airports_data
+    """
     return [ad for ad in airports_data if ad['icao_code'] == icao_code][0]
 
 
 def get_cities_data():
+    """
+    Read data from cities.txt and return it as a list of dictionaries with values.
+    """
     with open(data_folder + 'cities.txt') as f:
         lines = f.read().splitlines()
         objs = [
@@ -118,6 +152,16 @@ def get_cities_data():
 
 
 def get_nearest_cities(coords, n):
+    """
+    Get n nearests cities to a coordinates-like object
+
+    Args:
+        coords: dict with longitude and latitude items
+        n: number of nearest airports to return
+
+    Returns:
+        list of dictinaries with data of nearest cities
+    """
     return heapq.nsmallest(
         n,
         cities_data,
@@ -125,6 +169,15 @@ def get_nearest_cities(coords, n):
 
 
 def get_distance(start, end):
+    """
+    Get distance between two points on the globe
+
+    Args:
+        start, end: two points (dicts with longitude and latitude items)
+
+    Returns:
+        distance between start and end in kilometers
+    """
     start_long = math.radians(start['longitude'])
     start_latt = math.radians(start['latitude'])
     end_long = math.radians(end['longitude'])
@@ -137,10 +190,28 @@ def get_distance(start, end):
 
 
 def get_ip_data(ip):
+    """
+    Get GeoIP (city) information about an IP address
+
+    Args:
+        ip: ip address as a string
+
+    Returns:
+        GeoIP information about the IP as a dict
+    """
     return gi_city.record_by_addr(ip)
 
 
 def get_last_data(station_id):
+    """
+    Get last metar data by a station id (airport ICAO code)
+
+    Args:
+        station_id: station id (airport ICAO code)
+
+    Returns:
+        dict with last metar data for this station
+    """
     try:
         line = last_data[station_id]
         dct = metar_str_to_dict(line)
@@ -163,6 +234,15 @@ def format_timedelta(t1, t2):
 
 
 def get_data_for(coords):
+    """
+    Get last metar data for specified coordinates-like object
+
+    Args:
+        coords: dict with longitude and latitude items
+
+    Returns:
+        dict with items 'airport', 'metar', 'distance' which contain corresponding data
+    """
     nearest_airports = get_nearest_airports(coords, 10)
     airport = next(a for a in nearest_airports if get_last_data(a['icao_code']))
 
@@ -174,6 +254,12 @@ def get_data_for(coords):
 
 
 def get_ip():
+    """
+    Get the user IP address
+
+    Returns:
+        IP address as a string
+    """
     if not request.headers.getlist("X-Forwarded-For"):
         ip = request.remote_addr
     else:
@@ -183,6 +269,9 @@ def get_ip():
 
 @app.route('/')
 def index():
+    """
+    Index page: redirect to user page if logged in, and to city chooser otherwise
+    """
     if 'user_name' in session:
         return redirect(url_for('user_page'))
     else:
@@ -191,6 +280,13 @@ def index():
 
 @app.route('/choose_city/<next_action>')
 def city_chooser(next_action):
+    """
+    City chooser page
+
+    Args:
+        next_action: string 'show' to rediret to full city weather page on click,
+            or 'add' to add city to the user list
+    """
     ip = get_ip()
     ip_obj = get_ip_data(ip)
 
@@ -216,6 +312,14 @@ def city_chooser(next_action):
 
 @app.route('/_search_city/<next_action>')
 def search_city(next_action):
+    """
+    City search results - AJAX response
+    Search string should be passed as GET argument named 'text'
+
+    Args:
+        next_action: string 'show' to rediret to full city weather page on click,
+            or 'add' to add city to the user list
+    """
     text = request.args['text']
     cities = [
         c
@@ -235,6 +339,13 @@ def search_city(next_action):
 
 @app.route('/w/<city_id>/<for_humans>')
 def weather(city_id, for_humans):
+    """
+    Full weather page for a city
+
+    Args:
+        city_id: internal city identifier (integer number)
+        for_humans: unused argument, contains a string like the city name
+    """
     try:
         city_id = int(city_id)
     except ValueError:
@@ -251,6 +362,11 @@ def weather(city_id, for_humans):
 
 @app.route('/login', methods=['POST'])
 def login():
+    """
+    Process user login: create new user if not exists, or just log in as an existing one
+    Username should be supplied as POST argument 'user_name', and password as 'password'
+    This immediately redirects to index page (if login is incorrect), or to user page, both with a message
+    """
     user_name = request.form['user_name']
     password = request.form['password']
 
@@ -282,6 +398,9 @@ def login():
 
 @app.route("/logout")
 def logout():
+    """
+    Process user logout, and redirect to index page
+    """
     session.clear()
     flash(u'Выход выполнен')
     return redirect(url_for('index'))
@@ -289,6 +408,9 @@ def logout():
 
 @app.route('/user')
 def user_page():
+    """
+    User page, should be opened only when logged in correctly
+    """
     user = db.users_ids.find_one({'_id': session['user_name']})
     if not user:
         session.clear()
@@ -302,6 +424,13 @@ def user_page():
 
 @app.route('/add_city/<city_id>/<for_humans>')
 def add_city(city_id, for_humans):
+    """
+    Add a city to the logged in user list, then redirect to user page
+
+    Args:
+        city_id: internal city identifier (integer number)
+        for_humans: unused argument, contains a string like the city name
+    """
     user_name = session['user_name']
     city_id = int(city_id)
     db.users_ids.update({'_id': user_name, 'cities': {'$nin': [city_id]}}, {'$push': {'cities': city_id}})
@@ -310,6 +439,12 @@ def add_city(city_id, for_humans):
 
 @app.route('/remove_city/<city_id>')
 def remove_city(city_id):
+    """
+    Remove a city from the logged in user list, typically called by AJAX
+
+    Args:
+        city_id: internal city identifier (integer number)
+    """
     user_name = session['user_name']
     city_id = int(city_id)
     db.users_ids.update({'_id': user_name}, {'$pull': {'cities': city_id}})
