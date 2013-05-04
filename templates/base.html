@@ -15,7 +15,6 @@
 <body>
 <div class="container">
     {% for category, message in get_flashed_messages(with_categories=True) %}
-        {#    {% for category, message in [('error', 'Ошибка'), ('message', 'Сообщение')] %}#}
         <div class="alert alert-{{ "error" if category=="error" else "info" }}">{{ message }}</div>
     {% endfor %}
 
