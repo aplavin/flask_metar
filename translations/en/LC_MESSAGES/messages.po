@@ -118,7 +118,7 @@ msgstr "Overcast"
 
 #: templates/macros.html:34
 msgid "Облачность"
-msgstr ""
+msgstr "Clouds"
 
 #: templates/macros.html:39
 #, python-format
