@@ -83,10 +83,15 @@
             <div>{{ clouds_string(data.metar.clouds) }}</div>
             <div>{{ weather_conditions_string(data.metar.weather) }}</div>
             <div>{{ '%.0f' % data.metar.pressure }} мм.рт.ст.</div>
-            <div>Ветер
-                <span class="arrow dir-{{ data.metar.wind.direction | arrow_class }}"></span>
-                {{ '%.0f' % data.metar.wind.speed }}
-                м/с
+            <div>
+                {% if data.metar.wind.speed > 0 %}
+                    Ветер
+                    <span class="arrow dir-{{ data.metar.wind.direction | arrow_class }}"></span>
+                    {{ '%.0f' % data.metar.wind.speed }}
+                    м/с
+                {% else %}
+                    Безветренно
+                {% endif %}
             </div>
             <div>Точка росы {{ '%.0f' % data.metar.dew_point }}°C,
                 влажность {{ '%.0f' % (data.metar.humidity * 100) }}%
