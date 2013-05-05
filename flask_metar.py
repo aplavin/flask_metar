@@ -420,30 +420,39 @@ def remove_city(city_id):
     db.users_ids.update({'_id': user_name}, {'$pull': {'cities': city_id}})
     return ''
 
-
+# determine where it executes: on local PC or remote server
+# paths are different there
 if os.path.isdir('/root/flask-metar/data/'):
+    # remote server
     data_folder = '/root/flask-metar/data/'
 elif os.path.isdir('/home/alexander/metar/'):
+    # local PC
     data_folder = '/home/alexander/metar/'
 else:
+    # unknown
     raise NotImplemented
 
 cities_data = get_cities_data()
+# simple check to ensure that ids match
 assert all(c['id'] == i for i, c in enumerate(cities_data))
-
+# not actually "popular", but "featured"
 popular_cities_g = [c for c in cities_data if c['name_ru'] in [u'Москва', u'Долгопрудный', u'Сочи']]
 
 airports_data = get_airports_data()
 gi_city = pygeoip.GeoIP(data_folder + 'GeoIPCity.dat')
 
+# read data from last file in observations directory
 with open(sorted(glob(data_folder + 'observations/*'))[-1]) as f:
     last_data = f.read().splitlines()
+    # first 4 charactes in line represent ICAO code
     last_data = {line[:4]: line for line in last_data}
 
+# initialize Jinja2 objects used in templates
 app.jinja_env.globals['datetime'] = datetime
 app.jinja_env.globals['get_distance'] = get_distance
 jinja2_helpers.init(app.jinja_env)
 
+# connect to database
 conn = MongoClient()
 db = conn.flask_metar
 
