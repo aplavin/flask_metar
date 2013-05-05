@@ -114,7 +114,7 @@ msgstr "Broken clouds"
 
 #: templates/macros.html:32
 msgid "Сплошная облачность"
-msgstr "Overcase"
+msgstr "Overcast"
 
 #: templates/macros.html:34
 msgid "Облачность"
