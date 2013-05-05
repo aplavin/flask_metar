@@ -62,7 +62,6 @@
     {% endif %}
 {% endmacro %}
 
-
 {% macro long_tile(data, city, class_top, class_bottom, with_delete=False) %}
     <div class="span4 outline" style="position: relative;">
         {% if with_delete %}
@@ -85,7 +84,7 @@
             <div>{{ weather_conditions_string(data.metar.weather) }}</div>
             <div>{{ '%.0f' % data.metar.pressure }} мм.рт.ст.</div>
             <div>Ветер
-                <span class="arrow dir-{{ arrow_class_from_deg(data.metar.wind.direction) }}"></span>
+                <span class="arrow dir-{{ data.metar.wind.direction | arrow_class }}"></span>
                 {{ '%.0f' % data.metar.wind.speed }}
                 м/с
             </div>

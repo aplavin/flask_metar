@@ -1,4 +1,4 @@
-# coding=utf-8
+# encoding=utf-8
 from glob import glob
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 import math
@@ -7,9 +7,9 @@ import pygeoip
 import os
 from operator import attrgetter, itemgetter
 import heapq
-import json
 from datetime import datetime, timedelta
 from pymongo import MongoClient
+import jinja2_helpers
 
 
 app = Flask(__name__)
@@ -62,23 +62,6 @@ def metar_str_to_dict(line):
         dct['humidity'] = None
 
     return dct
-
-
-def arrow_class_from_deg(angle):
-    if angle is None:
-        return ''
-    arrow_directions = [
-        (0, 'n'),
-        (45, 'ne'),
-        (90, 'e'),
-        (135, 'se'),
-        (180, 's'),
-        (225, 'sw'),
-        (270, 'w'),
-        (315, 'nw'),
-        (360, 'n')
-    ]
-    return min(arrow_directions, key=lambda (ang, _): abs(ang - angle))[1]
 
 
 def get_airports_data():
@@ -218,19 +201,6 @@ def get_last_data(station_id):
     except KeyError, Metar.ParserError:
         return None
     return dct
-
-
-def format_timedelta(t1, t2):
-    tdelta = t2 - t1
-    secs = tdelta.total_seconds()
-    mins = int(secs % 3600 / 60)
-    hours = int(secs / 3600)
-    if hours and mins:
-        return u'%s ч %s м' % (hours, mins)
-    elif mins:
-        return u'%s м' % mins
-    elif hours:
-        return u'%s ч' % hours
 
 
 def get_data_for(coords):
@@ -471,9 +441,8 @@ with open(sorted(glob(data_folder + 'observations/*'))[-1]) as f:
     last_data = {line[:4]: line for line in last_data}
 
 app.jinja_env.globals['datetime'] = datetime
-app.jinja_env.globals['format_timedelta'] = format_timedelta
-app.jinja_env.globals['arrow_class_from_deg'] = arrow_class_from_deg
 app.jinja_env.globals['get_distance'] = get_distance
+jinja2_helpers.init(app.jinja_env)
 
 conn = MongoClient()
 db = conn.flask_metar
