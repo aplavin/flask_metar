@@ -452,7 +452,25 @@ def remove_city(city_id):
 
 @app.route('/change_language/<language_code>')
 def change_language(language_code):
-    session['locale'] = language_code
+    """
+    Set new language to a session variable, or remove it if same as default for this hostname
+    After this redirects to referrer page
+
+    Args:
+        language_code: language code to be set
+    """
+    if request.host == 'weather.aplavin.ru':
+        default_locale = 'en'
+    elif request.host == 'pogoda.aplavin.ru':
+        default_locale = 'ru'
+    else:
+        default_locale = 'en'
+
+    if language_code == default_locale:
+        del session['locale']
+    else:
+        session['locale'] = language_code
+
     babel_refresh()
     flash(_(u'Язык изменён'))
     return redirect(request.referrer)
@@ -460,6 +478,9 @@ def change_language(language_code):
 
 @babel.localeselector
 def get_locale():
+    """
+    Select locale which Babel uses for current request
+    """
     if 'locale' in session:
         return session['locale']
     elif request.host == 'weather.aplavin.ru':
