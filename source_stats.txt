@@ -1,0 +1,15 @@
+lines	words	bytes	file
+-----	-----	-----	----
+ 1147	3412	34060	total
+ 539	1702	16106	flask_metar.py
+ 205	405	4101	messages.pot
+ 143	594	6511	templates/macros.html
+ 75	194	1667	jinja2_helpers.py
+ 69	147	1262	static/css/my.css
+ 42	144	1724	templates/base.html
+ 40	110	1579	templates/city_chooser.html
+ 12	48	422	templates/user_page.html
+ 9	32	235	templates/weather.html
+ 9	18	237	static/js/my.js
+ 3	5	97	babel.cfg
+ 1	13	119	templates/city_search_results.html
