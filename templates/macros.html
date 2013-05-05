@@ -74,7 +74,7 @@
         {% endif %}
         <dl class="palette {{ class_top }}">
             <h3>{{ city.name[get_locale()] }}</h3>
-            {{ city.country[get_locale()] }},
+            {{ city.country_name[get_locale()] }},
             {{ _( '%(dist).0f км от метеостанции', dist=data.distance) }}
         </dl>
         <dl class="palette {{ class_bottom }}" style="line-height: 15pt;">
