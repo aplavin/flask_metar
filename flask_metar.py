@@ -13,6 +13,7 @@ import jinja2_helpers
 
 
 app = Flask(__name__)
+# doesn't have to be really secret as all app users have equal rights
 app.secret_key = '8ks0aCYAOPxdDy6I5KJfh4r9A9IX8YN9'
 
 
@@ -26,8 +27,10 @@ def metar_str_to_dict(line):
     Returns:
         dictionary with the values
     """
+    # parse string using library
     obs = Metar.Metar(line)
 
+    # restructure parsed data
     dct = {
         'station_id': obs.station_id,
         'datetime': obs.time + timedelta(hours=4),
@@ -55,10 +58,12 @@ def metar_str_to_dict(line):
     }
 
     if 'dew_point' in dct and 'temperature' in dct:
+        # can calculate humidity
         b, c = 17.67, 243.5
         dct['humidity'] = math.exp(
             b * dct['dew_point'] / (c + dct['dew_point']) - b * dct['temperature'] / (c + dct['temperature']))
     else:
+        # can't calculate humidity
         dct['humidity'] = None
 
     return dct
@@ -95,6 +100,7 @@ def get_nearest_airports(coords, n):
     return heapq.nsmallest(
         n,
         airports_data,
+        # hypot is used instead of get_distance in favour of speed
         key=lambda p: math.hypot(p['longitude'] - coords['longitude'], p['latitude'] - coords['latitude']))
 
 
@@ -148,6 +154,7 @@ def get_nearest_cities(coords, n):
     return heapq.nsmallest(
         n,
         cities_data,
+        # hypot is used instead of get_distance in favour of speed
         key=lambda p: math.hypot(p['longitude'] - coords['longitude'], p['latitude'] - coords['latitude']))
 
 
@@ -199,6 +206,7 @@ def get_last_data(station_id):
         line = last_data[station_id]
         dct = metar_str_to_dict(line)
     except KeyError, Metar.ParserError:
+        # no such station, or couldn't parse metar data
         return None
     return dct
 
@@ -213,6 +221,7 @@ def get_data_for(coords):
     Returns:
         dict with items 'airport', 'metar', 'distance' which contain corresponding data
     """
+    # get nearest airport for which last metar data exists
     nearest_airports = get_nearest_airports(coords, 10)
     airport = next(a for a in nearest_airports if get_last_data(a['icao_code']))
 
@@ -243,8 +252,10 @@ def index():
     Index page: redirect to user page if logged in, and to city chooser otherwise
     """
     if 'user_name' in session:
+        # logged in user - redirect to user page
         return redirect(url_for('user_page'))
     else:
+        # not logged in - redirect to city chooser page
         return redirect(url_for('city_chooser', next_action='show'))
 
 
@@ -257,17 +268,21 @@ def city_chooser(next_action):
         next_action: string 'show' to rediret to full city weather page on click,
             or 'add' to add city to the user list
     """
+    # IP address and its GeoIP data to show nearest cities
     ip = get_ip()
     ip_obj = get_ip_data(ip)
 
     if ip_obj.get('city', None) and ip_obj.get('latitude', None) and ip_obj.get('longitude', None):
+        # GeoIP location succeded, show nearest cities
         nearest_cities = get_nearest_cities(ip_obj, 3)
 
         for c in nearest_cities:
             c['data'] = get_data_for(c)
     else:
+        # couldn't locate, show no nearest cities
         nearest_cities = None
 
+    # get a copy of global variable
     popular_cities = popular_cities_g[:]
 
     for c in popular_cities:
@@ -294,10 +309,13 @@ def search_city(next_action):
     cities = [
         c
         for c in cities_data
+        # case-independent matching
         if any(name.lower().startswith(text.lower()) for name in [c['name_ru'], c['name_en']])
     ]
     cities.sort(key=itemgetter('name_ru'))
+    # take first 3 search results
     cities = cities[:3]
+
     for c in cities:
         c['data'] = get_data_for(c)
 
@@ -319,6 +337,7 @@ def weather(city_id, for_humans):
     try:
         city_id = int(city_id)
     except ValueError:
+        # city_id isn't and integer number
         return redirect(url_for('index'))
 
     city = cities_data[city_id]
@@ -345,6 +364,7 @@ def login():
         return redirect(url_for('index'))
 
     if db.users_ids.find({'_id': user_name}).count() == 0:
+        # create new user, also records IP address and creation datetime
         db.users_ids.insert({
             '_id': user_name,
             'pwd': password,
@@ -361,7 +381,7 @@ def login():
 
         flash(u'Вход выполнен: %s' % user_name)
 
-    # set session variable here, because errors are checked
+    # simply set session variable here, because errors are already checked
     session['user_name'] = user_name
     return redirect(url_for('user_page'))
 
@@ -383,8 +403,10 @@ def user_page():
     """
     user = db.users_ids.find_one({'_id': session['user_name']})
     if not user:
+        # not logged in or logged in incorrectly
         session.clear()
         return redirect(url_for('index'))
+
     city_ids = user['cities']
     cities = [cities_data[cid] for cid in city_ids]
     for c in cities:
