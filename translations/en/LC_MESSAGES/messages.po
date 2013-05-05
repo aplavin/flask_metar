@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-05-05 15:09+0400\n"
+"POT-Creation-Date: 2013-05-05 16:41+0400\n"
 "PO-Revision-Date: 2013-05-05 14:59+0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -22,34 +22,53 @@ msgstr ""
 msgid "Ошибка: слишком длинное имя (%(user)s) или пароль (%(password)s)"
 msgstr "Error: username (%(user)s) or password (%(password)s) is too long"
 
-#: flask_metar.py:377
+#: flask_metar.py:378
 #, python-format
 msgid "Создан новый пользователь: %(user)s"
 msgstr "New user created: %(user)s"
 
-#: flask_metar.py:381
+#: flask_metar.py:382
 #, python-format
 msgid "Ошибка: неверное имя (%(user)s) или пароль (%(password)s)"
 msgstr "Error: wrong username (%(user)s) or password (%(password)s)"
 
-#: flask_metar.py:384
+#: flask_metar.py:386
 #, python-format
 msgid "Вход выполнен: %(user)s"
 msgstr "Logged in as %(user)s"
 
-#: flask_metar.py:397
+#: flask_metar.py:399
 msgid "Выход выполнен"
 msgstr "Logged out"
 
-#: templates/base.html:27
+#: flask_metar.py:456
+msgid "Язык изменён"
+msgstr "Language changed"
+
+#: jinja2_helpers.py:39
+#, python-format
+msgid "%(h)d ч %(m)d м"
+msgstr "%(h)d h %(m)d m"
+
+#: jinja2_helpers.py:42
+#, python-format
+msgid "%(m)d м"
+msgstr "%(m)d m"
+
+#: jinja2_helpers.py:45
+#, python-format
+msgid "%(h)s ч"
+msgstr "%(h)s h"
+
+#: templates/base.html:31
 msgid "Точная информация о погоде"
 msgstr "Exact weather information"
 
-#: templates/base.html:33
+#: templates/base.html:39
 msgid "Плавин Александр"
 msgstr "Plavin Alexander"
 
-#: templates/base.html:35
+#: templates/base.html:40
 msgid "Исходный код"
 msgstr "Source code"
 

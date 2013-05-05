@@ -1,7 +1,7 @@
 # encoding=utf-8
 from glob import glob
 from flask import Flask, render_template, request, session, url_for, redirect, flash
-from flaskext.babel import Babel, gettext as _, ngettext as _n
+from flaskext.babel import Babel, gettext as _, ngettext as _n, refresh as babel_refresh
 import math
 from metar import Metar
 import pygeoip
@@ -393,7 +393,7 @@ def logout():
     """
     Process user logout, and redirect to index page
     """
-    session.clear()
+    del session['user_name']
     flash(_(u'Выход выполнен'))
     return redirect(url_for('index'))
 
@@ -403,10 +403,13 @@ def user_page():
     """
     User page, should be opened only when logged in correctly
     """
+    if 'user_name' not in session:
+        return redirect(url_for('index'))
+
     user = db.users_ids.find_one({'_id': session['user_name']})
     if not user:
-        # not logged in or logged in incorrectly
-        session.clear()
+        # username not in database, possibly due to some error
+        del session['user_name']
         return redirect(url_for('index'))
 
     city_ids = user['cities']
@@ -444,6 +447,24 @@ def remove_city(city_id):
     db.users_ids.update({'_id': user_name}, {'$pull': {'cities': city_id}})
     return ''
 
+@app.route('/change_language/<language_code>')
+def change_language(language_code):
+    session['locale'] = language_code
+    babel_refresh()
+    flash(_(u'Язык изменён'))
+    return redirect(request.referrer)
+
+
+@babel.localeselector
+def get_locale():
+    if 'locale' in session:
+        return session['locale']
+    elif request.host == 'weather.aplavin.ru':
+        return 'en'
+    elif request.host == 'pogoda.aplavin.ru':
+        return 'ru'
+    return 'en'
+
 # determine where it executes: on local PC or remote server
 # paths are different there
 if os.path.isdir('/root/flask-metar/data/'):
@@ -473,6 +494,7 @@ with open(sorted(glob(data_folder + 'observations/*'))[-1]) as f:
 
 # initialize Jinja2 objects used in templates
 jinja2_helpers.init(app.jinja_env)
+app.jinja_env.globals['get_locale'] = get_locale
 
 # connect to database
 conn = MongoClient()

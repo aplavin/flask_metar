@@ -63,3 +63,8 @@
     border-bottom: 25px solid orange;
     border-left: 25px solid transparent;
 }
+
+.link-inactive {
+    text-decoration: none;
+    color: inherit;
+}

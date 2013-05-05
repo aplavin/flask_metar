@@ -36,13 +36,13 @@ def format_timedelta(t1, t2):
     hours = int(secs / 3600)
     if hours and mins:
         # both are nonzero
-        return u'%s ч %s м' % (hours, mins)
+        return _(u'%(h)d ч %(m)d м', h=hours, m=mins)
     elif mins:
         # zero hours
-        return u'%s м' % mins
+        return _(u'%(m)d м', m=mins)
     elif hours:
         # zero minutes
-        return u'%s ч' % hours
+        return _(u'%(h)s ч', h=hours)
 
 
 @jinja_filter('arrow_class')

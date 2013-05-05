@@ -18,6 +18,10 @@
         <div class="alert alert-{{ "error" if category=="error" else "info" }}">{{ message }}</div>
     {% endfor %}
 
+    <div style="float: left;">
+        <a href="/change_language/en"{% if get_locale()=='en' %} class="link-inactive"{% endif %}>English</a> |
+        <a href="/change_language/ru"{% if get_locale()=='ru' %} class="link-inactive"{% endif %}>Русский</a> <br/>
+    </div>
     <div style="float: right;">
         {{ login() }}
     </div>
@@ -30,8 +34,10 @@
 
     {% block body %}{% endblock %}
 </div>
-<div class="footer-title" style="text-align: center;">&copy; {% trans %}Плавин Александр{% endtrans %}, 2013
-    <hr/>
-    {% trans %}Исходный код{% endtrans %}: <a href="http://hg.aplavin.ru/flask_metar">hg.aplavin.ru/flask_metar</a></div>
+<hr/>
+<div class="footer-title" style="text-align: center;">
+    &copy; {% trans %}Плавин Александр{% endtrans %}, 2013<br/>
+    {% trans %}Исходный код{% endtrans %}: <a href="http://hg.aplavin.ru/flask_metar">hg.aplavin.ru/flask_metar</a>
+</div>
 </body>
 </html>
