@@ -448,8 +448,6 @@ with open(sorted(glob(data_folder + 'observations/*'))[-1]) as f:
     last_data = {line[:4]: line for line in last_data}
 
 # initialize Jinja2 objects used in templates
-app.jinja_env.globals['datetime'] = datetime
-app.jinja_env.globals['get_distance'] = get_distance
 jinja2_helpers.init(app.jinja_env)
 
 # connect to database
