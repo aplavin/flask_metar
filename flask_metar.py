@@ -114,7 +114,7 @@ def get_airport_data(icao_code):
     Returns:
         airport data for the specified code, if it exists in airports_data
     """
-    return [ad for ad in airports_data if ad['icao_code'] == icao_code][0]
+    return next(ad for ad in airports_data if ad['icao_code'] == icao_code)
 
 
 def get_cities_data():
