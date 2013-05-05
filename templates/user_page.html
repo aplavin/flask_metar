@@ -3,7 +3,7 @@
 {% block title %}{{ session.user_name }}{% endblock %}
 
 {% block body %}
-    <a href="{{ url_for('city_chooser', next_action='add') }}">Добавить город</a>
+    <a href="{{ url_for('city_chooser', next_action='add') }}">{% trans %}Добавить город{% endtrans %}</a>
 
     <div class="row">
         {% for city in cities %}

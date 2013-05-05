@@ -1,0 +1,186 @@
+# English translations for PROJECT.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-05-05 15:09+0400\n"
+"PO-Revision-Date: 2013-05-05 14:59+0400\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: flask_metar.py:365
+#, python-format
+msgid "Ошибка: слишком длинное имя (%(user)s) или пароль (%(password)s)"
+msgstr "Error: username (%(user)s) or password (%(password)s) is too long"
+
+#: flask_metar.py:377
+#, python-format
+msgid "Создан новый пользователь: %(user)s"
+msgstr "New user created: %(user)s"
+
+#: flask_metar.py:381
+#, python-format
+msgid "Ошибка: неверное имя (%(user)s) или пароль (%(password)s)"
+msgstr "Error: wrong username (%(user)s) or password (%(password)s)"
+
+#: flask_metar.py:384
+#, python-format
+msgid "Вход выполнен: %(user)s"
+msgstr "Logged in as %(user)s"
+
+#: flask_metar.py:397
+msgid "Выход выполнен"
+msgstr "Logged out"
+
+#: templates/base.html:27
+msgid "Точная информация о погоде"
+msgstr "Exact weather information"
+
+#: templates/base.html:33
+msgid "Плавин Александр"
+msgstr "Plavin Alexander"
+
+#: templates/base.html:35
+msgid "Исходный код"
+msgstr "Source code"
+
+#: templates/city_chooser.html:3
+msgid "Выбор города"
+msgstr "Choose a city"
+
+#: templates/city_chooser.html:6
+msgid "Поиск"
+msgstr "Search"
+
+#: templates/city_chooser.html:9
+msgid "Название города"
+msgstr "City name"
+
+#: templates/city_chooser.html:39
+msgid "Ближайшие"
+msgstr "Nearest"
+
+#: templates/city_chooser.html:40
+msgid "Популярные"
+msgstr "Popular"
+
+#: templates/macros.html:20
+msgid "Безоблачно"
+msgstr "No clouds"
+
+#: templates/macros.html:24
+msgid "Ясно"
+msgstr "Clear"
+
+#: templates/macros.html:26
+msgid "Незначительная облачность"
+msgstr "Few clouds"
+
+#: templates/macros.html:28
+msgid "Средняя облачность"
+msgstr "Scattered clouds"
+
+#: templates/macros.html:30
+msgid "Сильная облачность"
+msgstr "Broken clouds"
+
+#: templates/macros.html:32
+msgid "Сплошная облачность"
+msgstr "Overcase"
+
+#: templates/macros.html:34
+msgid "Облачность"
+msgstr ""
+
+#: templates/macros.html:39
+#, python-format
+msgid "на высоте %(height).0f м"
+msgstr "at %(height).0f m high"
+
+#: templates/macros.html:47
+msgid "Без осадков"
+msgstr "No precipitation"
+
+#: templates/macros.html:53
+msgid "Снег"
+msgstr "Snow"
+
+#: templates/macros.html:78
+#, python-format
+msgid "%(dist).0f км от метеостанции"
+msgstr "%(dist).0f km far from meteo station"
+
+#: templates/macros.html:85
+#, python-format
+msgid "%(press).0f мм.рт.ст."
+msgstr "%(press).0f mmHg"
+
+#: templates/macros.html:88
+msgid "Ветер"
+msgstr "Wind"
+
+#: templates/macros.html:90
+#, python-format
+msgid "%(speed).0f м/с"
+msgstr "%(speed).0f m/s"
+
+#: templates/macros.html:92
+msgid "Безветренно"
+msgstr "No wind"
+
+#: templates/macros.html:95
+#, python-format
+msgid "Точка росы %(dew).0f°C"
+msgstr "Dew poing %(dew).0f°C"
+
+#: templates/macros.html:96
+#, python-format
+msgid "влажность %(hum).0f%%"
+msgstr "humidity %(hum).0f%%"
+
+#: templates/macros.html:98
+msgid "Видимость"
+msgstr "Visibility"
+
+#: templates/macros.html:98
+#, python-format
+msgid "%(vis).0f м"
+msgstr "%(vis).0f m"
+
+#: templates/macros.html:108
+msgid "Если пользователя не существует, он будет создан:"
+msgstr "If the user doesn't exist, it will be created:"
+
+#: templates/macros.html:109
+msgid "Имя"
+msgstr "Username"
+
+#: templates/macros.html:110
+msgid "Пароль"
+msgstr "Password"
+
+#: templates/macros.html:112
+msgid "Войти"
+msgstr "Log in"
+
+#: templates/macros.html:127
+msgid "Пользователь"
+msgstr "User"
+
+#: templates/macros.html:129
+msgid "Выйти"
+msgstr "Log out"
+
+#: templates/user_page.html:6
+msgid "Добавить город"
+msgstr "Add city"
+

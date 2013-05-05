@@ -24,14 +24,14 @@
     <div class="demo-headline">
         <h1 class="demo-logo">
             <a href="/">MeWeather</a>
-            <small>Точная информация о погоде</small>
+            <small>{% trans %}Точная информация о погоде{% endtrans %}</small>
         </h1>
     </div>
 
     {% block body %}{% endblock %}
 </div>
-<div class="footer-title" style="text-align: center;">&copy; Плавин Александр, 2013
+<div class="footer-title" style="text-align: center;">&copy; {% trans %}Плавин Александр{% endtrans %}, 2013
     <hr/>
-    Исходный код: <a href="http://hg.aplavin.ru/flask_metar">hg.aplavin.ru/flask_metar</a></div>
+    {% trans %}Исходный код{% endtrans %}: <a href="http://hg.aplavin.ru/flask_metar">hg.aplavin.ru/flask_metar</a></div>
 </body>
 </html>

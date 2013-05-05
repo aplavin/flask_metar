@@ -1,6 +1,7 @@
 # encoding=utf-8
 from glob import glob
 from flask import Flask, render_template, request, session, url_for, redirect, flash
+from flaskext.babel import Babel, gettext as _, ngettext as _n
 import math
 from metar import Metar
 import pygeoip
@@ -13,6 +14,7 @@ import jinja2_helpers
 
 
 app = Flask(__name__)
+babel = Babel(app)
 # doesn't have to be really secret as all app users have equal rights
 app.secret_key = '8ks0aCYAOPxdDy6I5KJfh4r9A9IX8YN9'
 
@@ -360,7 +362,7 @@ def login():
     password = request.form['password']
 
     if len(user_name) + len(password) > 100:
-        flash(u'Ошибка: слишком длинное имя (%s) или пароль (%s)' % (user_name, password), 'error')
+        flash(_(u'Ошибка: слишком длинное имя (%(user)s) или пароль (%(password)s)', user=user_name, password=password), 'error')
         return redirect(url_for('index'))
 
     if db.users_ids.find({'_id': user_name}).count() == 0:
@@ -372,14 +374,14 @@ def login():
             'reg_ip': get_ip(),
             'reg_dt': datetime.utcnow(),
         })
-        flash(u'Создан новый пользователь: %s' % user_name)
+        flash(_(u'Создан новый пользователь: %(user)s', user=user_name))
     else:
         user = db.users_ids.find_one({'_id': user_name})
         if user['pwd'] != password:
-            flash(u'Ошибка: неверное имя (%s) или пароль (%s)' % (user_name, password), 'error')
+            flash(_(u'Ошибка: неверное имя (%(user)s) или пароль (%(password)s)', user=user_name, password=password), 'error')
             return redirect(url_for('index'))
 
-        flash(u'Вход выполнен: %s' % user_name)
+        flash(_(u'Вход выполнен: %(user)s', user=user_name))
 
     # simply set session variable here, because errors are already checked
     session['user_name'] = user_name
@@ -392,7 +394,7 @@ def logout():
     Process user logout, and redirect to index page
     """
     session.clear()
-    flash(u'Выход выполнен')
+    flash(_(u'Выход выполнен'))
     return redirect(url_for('index'))
 
 

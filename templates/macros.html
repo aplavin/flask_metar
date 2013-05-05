@@ -17,26 +17,26 @@
 
 {% macro clouds_string(clouds) %}
     {% if not clouds %}
-        Безоблачно
+        {% trans %}Безоблачно{% endtrans %}
     {% else %}
         {% set cloud = clouds[0] %}
         {% if cloud.cover in ['SKC', 'CLR', 'NSC'] %}
-            Ясно
+            {% trans %}Ясно{% endtrans %}
         {% elif cloud.cover == 'FEW' %}
-            Незначительная облачность
+            {% trans %}Незначительная облачность{% endtrans %}
         {% elif cloud.cover == 'SCT' %}
-            Средняя облачность
+            {% trans %}Средняя облачность{% endtrans %}
         {% elif cloud.cover == 'BKN' %}
-            Сильная облачность
+            {% trans %}Сильная облачность{% endtrans %}
         {% elif cloud.cover == 'OVC' %}
-            Сплошная облачность
+            {% trans %}Сплошная облачность{% endtrans %}
         {% elif cloud.cover == 'VV' %}
-            Облачность
+            {% trans %}Облачность{% endtrans %}
         {% else %}
             НЕИЗВЕСТНО!!!
         {% endif %}
         {% if cloud.cover not in ['SKC', 'CLR', 'NSC'] and cloud.height %}
-            на высоте {{ '%.0f' % (cloud.height|round(-1)) }} м
+            {{ _( 'на высоте %(height).0f м', height=cloud.height|round(-1)) }}
         {% endif %}
     {% endif %}
 {% endmacro %}
@@ -44,13 +44,13 @@
 
 {% macro weather_conditions_string(weather) %}
     {% if not weather %}
-        Без осадков
+        {% trans %}Без осадков{% endtrans %}
     {% else %}
         {% set j = joiner() %}
         {% for intensity, description, precipitation, obscuration, other in weather %}
             {{ j() }}
             {% if precipitation == 'SN' %}
-                Снег
+                {% trans %}Снег{% endtrans %}
             {% else %}
                 {{ precipitation }}
             {% endif %}
@@ -75,28 +75,27 @@
         <dl class="palette {{ class_top }}">
             <h3>{{ city.name_ru }}</h3>
             {{ city.country_ru }},
-            {{ '%.0f' % data.distance }} км от метеостанции
+            {{ _( '%(dist).0f км от метеостанции', dist=data.distance) }}
         </dl>
         <dl class="palette {{ class_bottom }}" style="line-height: 15pt;">
             <h2>{{ '%g' % data.metar.temperature }}°C</h2>
 
             <div>{{ clouds_string(data.metar.clouds) }}</div>
             <div>{{ weather_conditions_string(data.metar.weather) }}</div>
-            <div>{{ '%.0f' % data.metar.pressure }} мм.рт.ст.</div>
+            <div>{{ _( '%(press).0f мм.рт.ст.', press=data.metar.pressure) }}</div>
             <div>
                 {% if data.metar.wind.speed > 0 %}
-                    Ветер
+                    {% trans %}Ветер{% endtrans %}
                     <span class="arrow dir-{{ data.metar.wind.direction | arrow_class }}"></span>
-                    {{ '%.0f' % data.metar.wind.speed }}
-                    м/с
+                    {{ _( '%(speed).0f м/с', speed=data.metar.wind.speed) }}
                 {% else %}
-                    Безветренно
+                    {% trans %}Безветренно{% endtrans %}
                 {% endif %}
             </div>
-            <div>Точка росы {{ '%.0f' % data.metar.dew_point }}°C,
-                влажность {{ '%.0f' % (data.metar.humidity * 100) }}%
+            <div>{{ _( 'Точка росы %(dew).0f°C', dew=data.metar.dew_point) }},
+                {{ _( 'влажность %(hum).0f%%', hum=data.metar.humidity * 100) }}
             </div>
-            <div>Видимость {% if data.metar.visibility[1] < 9000 %}{{ '%.0f' % data.metar.visibility[1] }} м
+            <div>{% trans %}Видимость{% endtrans %} {% if data.metar.visibility[1] < 9000 %}{{ _( '%(vis).0f м', data.metar.visibility[1]) }}
                 {% else %}<span style="font-size: large;">∞</span>{% endif %}</div>
         </dl>
     </div>
@@ -106,11 +105,11 @@
 {% macro login() %}
     {% if not session.user_name %}
         <form action="{{ url_for("login") }}" method="POST">
-            <p class="login_hidden">Если пользователя не существует, он будет создан:</p>
-            <input type="text" class="login_hidden" name="user_name" placeholder="Имя">
-            <input type="text" class="login_hidden" name="password" placeholder="Пароль">
+            <p class="login_hidden">{% trans %}Если пользователя не существует, он будет создан:{% endtrans %}</p>
+            <input type="text" class="login_hidden" name="user_name" placeholder="{% trans %}Имя{% endtrans %}">
+            <input type="text" class="login_hidden" name="password" placeholder="{% trans %}Пароль{% endtrans %}">
             <span class="fui-lock-24"></span>
-            <input type="submit" id="login_submit_button" class="btn btn-primary" value="Войти">
+            <input type="submit" id="login_submit_button" class="btn btn-primary" value="{% trans %}Войти{% endtrans %}">
             <script>
                 $(".login_hidden").hide();
                 $("#login_submit_button")
@@ -125,9 +124,9 @@
             </script>
         </form>
     {% else %}
-        Пользователь <a href="{{ url_for('user_page') }}">{{ session.user_name }}</a>
+        {% trans %}Пользователь{% endtrans %} <a href="{{ url_for('user_page') }}">{{ session.user_name }}</a>
         <span class="fui-man-24"></span>&nbsp;
-        <a href="{{ url_for("logout") }}" class="btn btn-primary">Выйти</a>
+        <a href="{{ url_for("logout") }}" class="btn btn-primary">{% trans %}Выйти{% endtrans %}</a>
     {% endif %}
 {% endmacro %}
 

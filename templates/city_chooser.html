@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Выбор города{% endblock %}
+{% block title %}{% trans %}Выбор города{% endtrans %}{% endblock %}
 
 {% block body %}
-    <h2 class="demo-panel-title">Поиск</h2>
+    <h2 class="demo-panel-title">{% trans %}Поиск{% endtrans %}</h2>
 
     <div>
-        <input name="search_city_name" type="text" placeholder="Название города" id="search-input" style="width: 40%;">
+        <input name="search_city_name" type="text" placeholder="{% trans %}Название города{% endtrans %}" id="search-input" style="width: 40%;">
 
         <div id="search-results" class="row mbl">
 
@@ -36,6 +36,6 @@
         </script>
     </div>
 
-    {{ cities_list("Ближайшие", nearest_cities, 'info', 'info-dark', next_action=next_action) }}
-    {{ cities_list("Популярные", popular_cities, 'night', 'night-dark', next_action=next_action) }}
+    {{ cities_list(_("Ближайшие"), nearest_cities, 'info', 'info-dark', next_action=next_action) }}
+    {{ cities_list(_("Популярные"), popular_cities, 'night', 'night-dark', next_action=next_action) }}
 {% endblock %}
