@@ -456,6 +456,8 @@ db = conn.flask_metar
 
 
 def main():
+    # if this is run as script, start development server
+    # WARN: available from any IP address for convenience
     app.run(debug=True, host='0.0.0.0')
 
 
