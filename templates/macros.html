@@ -1,11 +1,11 @@
 {% macro short_tile(data, city, class_top, class_bottom, next_action='show') %}
-    <a href="{{ url_for('weather', city_id=city.id, for_humans=city.name_en)
+    <a href="{{ url_for('weather', city_id=city.id, for_humans=city.name.en)
             if next_action == 'show' else
-            url_for('add_city', city_id=city.id, for_humans=city.name_en) }}">
+            url_for('add_city', city_id=city.id, for_humans=city.name.en) }}">
         <div class="span3 outline">
             <dl class="palette {{ class_top }}">
-                <h3>{{ city.name_ru }}</h3>
-                {{ city.country_ru }}
+                <h3>{{ city.name[get_locale()] }}</h3>
+                {{ city.country_name[get_locale()] }}
             </dl>
             <dl class="palette {{ class_bottom }}">
                 <h2>{{ '%g' % data.metar.temperature }}°C</h2>
@@ -73,8 +73,8 @@
             </a>
         {% endif %}
         <dl class="palette {{ class_top }}">
-            <h3>{{ city.name_ru }}</h3>
-            {{ city.country_ru }},
+            <h3>{{ city.name[get_locale()] }}</h3>
+            {{ city.country[get_locale()] }},
             {{ _( '%(dist).0f км от метеостанции', dist=data.distance) }}
         </dl>
         <dl class="palette {{ class_bottom }}" style="line-height: 15pt;">

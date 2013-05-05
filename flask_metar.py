@@ -129,10 +129,14 @@ def get_cities_data():
             {
                 'id': int(splitted[0]),
                 'country_code': splitted[1],
-                'country_en': splitted[2].decode('utf-8'),
-                'country_ru': splitted[3].decode('utf-8'),
-                'name_en': splitted[4].decode('utf-8'),
-                'name_ru': splitted[5].decode('utf-8'),
+                'country_name': {
+                    'en': splitted[2].decode('utf-8'),
+                    'ru': splitted[3].decode('utf-8'),
+                },
+                'name': {
+                    'en': splitted[4].decode('utf-8'),
+                    'ru': splitted[5].decode('utf-8'),
+                },
                 'latitude': float(splitted[6]),
                 'longitude': float(splitted[7]),
             }
@@ -312,9 +316,10 @@ def search_city(next_action):
         c
         for c in cities_data
         # case-independent matching
-        if any(name.lower().startswith(text.lower()) for name in [c['name_ru'], c['name_en']])
+        if any(name.lower().startswith(text.lower()) for name in [c['name']['ru'], c['name']['en']])
     ]
-    cities.sort(key=itemgetter('name_ru'))
+    locale = get_locale()
+    cities.sort(key=lambda c: c['name'][locale])
     # take first 3 search results
     cities = cities[:3]
 
@@ -505,7 +510,7 @@ cities_data = get_cities_data()
 # simple check to ensure that ids match
 assert all(c['id'] == i for i, c in enumerate(cities_data))
 # not actually "popular", but "featured"
-popular_cities_g = [c for c in cities_data if c['name_ru'] in [u'Москва', u'Долгопрудный', u'Сочи']]
+popular_cities_g = [c for c in cities_data if c['name']['ru'] in [u'Москва', u'Долгопрудный', u'Сочи']]
 
 airports_data = get_airports_data()
 gi_city = pygeoip.GeoIP(data_folder + 'GeoIPCity.dat')
