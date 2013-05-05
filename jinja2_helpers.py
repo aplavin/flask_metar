@@ -4,6 +4,9 @@ jinja_filters = {}
 
 
 def jinja_filter(arg=None):
+    """
+    Decorator which adds function to jinja_filters
+    """
     def decorate(func):
         jinja_filters[name or func.__name__] = func
         return func
@@ -18,6 +21,15 @@ def jinja_filter(arg=None):
 
 @jinja_filter
 def format_timedelta(t1, t2):
+    """
+    Format timedelta between t1 and t2 as hours and minutes
+
+    Args:
+        t1, t2: two moments in time represented by datetime
+
+    Returns:
+        string containing formatted timedelta
+    """
     tdelta = t2 - t1
     secs = tdelta.total_seconds()
     mins = int(secs % 3600 / 60)
@@ -32,6 +44,15 @@ def format_timedelta(t1, t2):
 
 @jinja_filter('arrow_class')
 def arrow_class_from_deg(angle):
+    """
+    Get CSS arrow class which gives the nearest direction to the specified angle
+
+    Args:
+        angle: angle in degrees, clockwise, 0 is up arrow
+
+    Returns:
+        string containing CSS class name
+    """
     if angle is None:
         return ''
     arrow_directions = [
