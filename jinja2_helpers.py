@@ -35,10 +35,13 @@ def format_timedelta(t1, t2):
     mins = int(secs % 3600 / 60)
     hours = int(secs / 3600)
     if hours and mins:
+        # both are nonzero
         return u'%s ч %s м' % (hours, mins)
     elif mins:
+        # zero hours
         return u'%s м' % mins
     elif hours:
+        # zero minutes
         return u'%s ч' % hours
 
 
