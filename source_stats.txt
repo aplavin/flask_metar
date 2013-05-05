@@ -13,3 +13,5 @@ lines	words	bytes	file
  9	18	237	static/js/my.js
  3	5	97	babel.cfg
  1	13	119	templates/city_search_results.html
+total excluding empty: 
+ 960	3412	33873

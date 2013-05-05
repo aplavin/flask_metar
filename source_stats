@@ -1,9 +1,17 @@
 #!/bin/bash
 
+FILELIST="flask_metar.py jinja2_helpers.py babel.cfg static/css/my.css static/js/my.js templates/* messages.pot"
+
 echo 'lines	words	bytes	file'
 echo '-----	-----	-----	----'
 
-wc flask_metar.py jinja2_helpers.py babel.cfg static/css/my.css static/js/my.js templates/* messages.pot \
+wc $FILELIST \
 	| sort -gr \
 	| sed -r 's/ +/\t/g' \
 	| sed -r 's/^\t/ /g'
+
+echo 'total excluding empty: '
+grep -v --no-filename '^\s*$' $FILELIST \
+	| wc \
+	| sed -r 's/ +/\t/g' \
+        | sed -r 's/^\t/ /g'
