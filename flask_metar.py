@@ -362,7 +362,8 @@ def login():
     password = request.form['password']
 
     if len(user_name) + len(password) > 100:
-        flash(_(u'Ошибка: слишком длинное имя (%(user)s) или пароль (%(password)s)', user=user_name, password=password), 'error')
+        flash(_(u'Ошибка: слишком длинное имя (%(user)s) или пароль (%(password)s)', user=user_name, password=password),
+              'error')
         return redirect(url_for('index'))
 
     if db.users_ids.find({'_id': user_name}).count() == 0:
@@ -378,7 +379,8 @@ def login():
     else:
         user = db.users_ids.find_one({'_id': user_name})
         if user['pwd'] != password:
-            flash(_(u'Ошибка: неверное имя (%(user)s) или пароль (%(password)s)', user=user_name, password=password), 'error')
+            flash(_(u'Ошибка: неверное имя (%(user)s) или пароль (%(password)s)', user=user_name, password=password),
+                  'error')
             return redirect(url_for('index'))
 
         flash(_(u'Вход выполнен: %(user)s', user=user_name))
@@ -446,6 +448,7 @@ def remove_city(city_id):
     city_id = int(city_id)
     db.users_ids.update({'_id': user_name}, {'$pull': {'cities': city_id}})
     return ''
+
 
 @app.route('/change_language/<language_code>')
 def change_language(language_code):
