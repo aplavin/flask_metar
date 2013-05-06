@@ -1,3 +1,7 @@
+{#
+contains link to full page, city and contry names, and temperature
+is used in city lists
+#}
 {% macro short_tile(data, city, class_top, class_bottom, next_action='show') %}
     <a href="{{ url_for('weather', city_id=city.id, for_humans=city.name.en)
             if next_action == 'show' else
@@ -15,6 +19,9 @@
 {% endmacro %}
 
 
+{#
+description for a clouds array
+#}
 {% macro clouds_string(clouds) %}
     {% if not clouds %}
         {% trans %}Безоблачно{% endtrans %}
@@ -42,6 +49,9 @@
 {% endmacro %}
 
 
+{#
+description of weather array
+#}
 {% macro weather_conditions_string(weather) %}
     {% if not weather %}
         {% trans %}Без осадков{% endtrans %}
@@ -62,6 +72,12 @@
     {% endif %}
 {% endmacro %}
 
+
+{#
+full infromation: city and country name, distance from station, temperature,
+clouds, weather conditions, pressure, wind, humidity, visibility,
+and if a deletion link if requested
+#}
 {% macro long_tile(data, city, class_top, class_bottom, with_delete=False) %}
     <div class="span4 outline" style="position: relative;">
         {% if with_delete %}
@@ -102,6 +118,10 @@
 {% endmacro %}
 
 
+{#
+login form (shows after pressing login button) if not logged in,
+and username with logout button if logged in
+#}
 {% macro login() %}
     {% if not session.user_name %}
         <form action="{{ url_for("login") }}" method="POST">
@@ -131,6 +151,9 @@
 {% endmacro %}
 
 
+{#
+list of short_tile()s for each city
+#}
 {% macro cities_list(header, cities, palette_top, palette_bottom, next_action=None) %}
     {% if cities %}
         {% if header %}<h2 class="demo-panel-title">{{ header }}</h2>{% endif %}
